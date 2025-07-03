@@ -12,11 +12,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-
-        if (!credentials) return null;
+        if (!credentials) {
+          return null;
+        }
 
         const existingUser = await client.user.findUnique({
-          where: { username: credentials.username }, 
+          where: { username: credentials.username },
         });
 
         if (existingUser) {
@@ -49,7 +50,7 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Error creating user:", error);
-          return null; 
+          return null;
         }
       },
     }),

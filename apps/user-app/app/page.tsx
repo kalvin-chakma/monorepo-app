@@ -1,12 +1,9 @@
-import { client } from "@repo/db/client";
+import { Appbar } from "@repo/ui/appbar";
 
-export default async function Home() {
-  const user = await client.user.findFirst();
+export default function Home() {
   return (
     <div className="text-3xl font-bold underline">
-      kalvin chakma
-      {user?.username}
-      {user?.password}
+      <Appbar />
     </div>
   );
 }
