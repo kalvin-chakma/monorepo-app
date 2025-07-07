@@ -1,4 +1,4 @@
-import { Appbar } from "@repo/ui/appbar";
+import { Appbar } from "@repo/ui/components/appbar";
 
 export default function Home() {
   return (
