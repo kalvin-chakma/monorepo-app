@@ -20,39 +20,28 @@ export const authOptions: NextAuthOptions = {
           where: { username: credentials.username },
         });
 
-        if (existingUser) {
-          const passwordMatch = await bcrypt.compare(
-            credentials.password,
-            existingUser.password
-          );
-          if (passwordMatch) {
-            return {
-              id: existingUser.id.toString(),
-              username: existingUser.username,
-            };
-          }
+        if (!existingUser) {
           return null;
         }
 
-        try {
-          const hashPassword = await bcrypt.hash(credentials.password, 10);
+        const passwordMatch = await bcrypt.compare(
+          credentials.password,
+          existingUser.password
+        );
 
-          const user = await client.user.create({
-            data: {
-              username: credentials.username,
-              password: hashPassword,
-            },
-          });
-
-          return {
-            id: user.id.toString(),
-            username: user.username,
-          };
-        } catch (error) {
-          console.error("Error creating user:", error);
+        if (!passwordMatch) {
           return null;
         }
+        
+        return {
+          id: existingUser.id.toString(),
+          username: existingUser.username,
+        };
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 };

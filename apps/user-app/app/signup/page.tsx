@@ -13,17 +13,20 @@ export default function SignUpPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
+
     try {
-      const res = await fetch("/api/auth/callback/credentials", {
+      const res = await fetch("api/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ username, password }).toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       });
+
+      const data = await res.json();
+
       if (res.ok) {
         setSuccess("Sign up successful! Redirecting to home...");
-        setTimeout(() => router.push("/"), 1500);
+        setTimeout(() => router.push("/signin"), 1500);
       } else {
-        const data = await res.json();
         setError(data.error || "Sign up failed");
       }
     } catch (err) {
@@ -43,6 +46,7 @@ export default function SignUpPage() {
           <input
             type="text"
             value={username}
+            autoComplete="username"
             onChange={(e) => setUsername(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
             required
@@ -53,6 +57,7 @@ export default function SignUpPage() {
           <input
             type="password"
             value={password}
+            autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
             required

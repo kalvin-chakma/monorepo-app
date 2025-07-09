@@ -12,11 +12,13 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
     const res = await signIn("credentials", {
       redirect: false,
       username,
       password,
     });
+
     if (res?.ok) {
       router.push("/");
     } else {
@@ -36,6 +38,7 @@ export default function SignInPage() {
           <input
             type="text"
             value={username}
+            autoComplete="username"
             onChange={(e) => setUsername(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
             required
@@ -46,6 +49,7 @@ export default function SignInPage() {
           <input
             type="password"
             value={password}
+            autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
             required
