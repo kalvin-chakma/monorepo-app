@@ -9,12 +9,12 @@ datasource db {
 }
 
 model User {
-  id          String               @id @default(uuid())
-  email       String?              @unique
-  username    String               @unique
-  password    String
-  onRampTranscations onRampTranscation[]
-  Balance     Balance[]
+  id                 String               @id @default(uuid())
+  email              String               @unique
+  username           String               @unique
+  password           String
+  onRampTransactions onRampTransaction[]
+  Balance            Balance[]
 }
 
 model Merchant {
@@ -24,7 +24,7 @@ model Merchant {
   auth_type AuthType
 }
 
-model onRampTranscation {
+model onRampTransaction {
   id        Int         @id @default(autoincrement())
   status    onRampStatus
   token     String
@@ -36,11 +36,11 @@ model onRampTranscation {
 }
 
 model Balance {
-  id        Int   @id @default(autoincrement())
-  userId    String   @unique
+  id        Int     @id @default(autoincrement())
+  userId    String  @unique
   amount    Int
   locked    Int
-  user      User  @relation(fields: [userId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 enum AuthType {

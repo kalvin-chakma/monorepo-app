@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import {client } from "@repo/db/client";
+import { client } from "@repo/db/client";
 
 const app = express();
 const PORT = 5000;
@@ -34,9 +34,9 @@ app.post("/hdfcServer", async (req: Request, res: Response) => {
           },
         },
       }),
-      client.onRampTranscation.updateMany({
+      client.onRampTransaction.updateMany({
         where: { token },
-        data: { status: "Success" }, 
+        data: { status: "Success" },
       }),
     ]);
 

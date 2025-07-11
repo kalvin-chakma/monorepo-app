@@ -7,7 +7,7 @@ CREATE TYPE "onRampStatus" AS ENUM ('Success', 'Failure', 'Processing');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "email" TEXT,
+    "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
@@ -25,7 +25,7 @@ CREATE TABLE "Merchant" (
 );
 
 -- CreateTable
-CREATE TABLE "onRampTranscation" (
+CREATE TABLE "onRampTransaction" (
     "id" SERIAL NOT NULL,
     "status" "onRampStatus" NOT NULL,
     "token" TEXT NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE "onRampTranscation" (
     "startTime" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "onRampTranscation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "onRampTransaction_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -60,7 +60,7 @@ CREATE UNIQUE INDEX "Merchant_email_key" ON "Merchant"("email");
 CREATE UNIQUE INDEX "Balance_userId_key" ON "Balance"("userId");
 
 -- AddForeignKey
-ALTER TABLE "onRampTranscation" ADD CONSTRAINT "onRampTranscation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "onRampTransaction" ADD CONSTRAINT "onRampTransaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Balance" ADD CONSTRAINT "Balance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

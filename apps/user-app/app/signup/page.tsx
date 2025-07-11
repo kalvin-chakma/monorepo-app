@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,16 +16,16 @@ export default function SignUpPage() {
     setSuccess("");
 
     try {
-      const res = await fetch("api/signup", {
+      const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setSuccess("Sign up successful! Redirecting to home...");
+        setSuccess("Sign up successful! Redirecting to sign in...");
         setTimeout(() => router.push("/signin"), 1500);
       } else {
         setError(data.error || "Sign up failed");
@@ -42,6 +43,17 @@ export default function SignUpPage() {
       >
         <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
         <div className="mb-4">
+          <label className="block mb-1 font-medium">Email</label>
+          <input
+            type="email"
+            value={email}
+            autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+            required
+          />
+        </div>
+        <div className="mb-4">
           <label className="block mb-1 font-medium">Username</label>
           <input
             type="text"
@@ -57,7 +69,7 @@ export default function SignUpPage() {
           <input
             type="password"
             value={password}
-            autoComplete="current-password"
+            autoComplete="new-password"
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
             required

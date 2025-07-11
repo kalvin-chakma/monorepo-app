@@ -1,47 +1,54 @@
-import { client } from "@repo/db/client";
-import CredentialProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+// lib/auth.ts
 import type { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
+import { client } from "@repo/db/client"; // Your Prisma client
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    CredentialProvider({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials) {
-          return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
         }
 
-        const existingUser = await client.user.findUnique({
-          where: { username: credentials.username },
+        const user = await client.user.findUnique({
+          where: { email: credentials.email },
         });
 
-        if (!existingUser) {
-          return null;
-        }
+        if (!user) throw new Error("No user found");
 
-        const passwordMatch = await bcrypt.compare(
-          credentials.password,
-          existingUser.password
-        );
+        const validPassword = await bcrypt.compare(credentials.password, user.password);
+        if (!validPassword) throw new Error("Invalid password");
 
-        if (!passwordMatch) {
-          return null;
-        }
-        
-        return {
-          id: existingUser.id.toString(),
-          username: existingUser.username,
-        };
+        return { id: user.id, email: user.email, username: user.username };
       },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          email: token.email,
+        };
+      }
+      return session;
+    },
+  },
 };

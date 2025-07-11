@@ -1,9 +1,10 @@
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "../generated/prisma"; // Adjust path if needed
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Seed user: Alice
   const alice = await prisma.user.upsert({
     where: { username: "alice" },
     update: {},
@@ -17,7 +18,7 @@ async function main() {
           locked: 0,
         },
       },
-      onRampTranscations: {
+      onRampTransactions: {
         create: {
           startTime: new Date(),
           status: "Success",
@@ -29,6 +30,7 @@ async function main() {
     },
   });
 
+  // Seed user: Bob
   const bob = await prisma.user.upsert({
     where: { username: "bob" },
     update: {},
@@ -42,7 +44,7 @@ async function main() {
           locked: 0,
         },
       },
-      onRampTranscations: {
+      onRampTransactions: {
         create: {
           startTime: new Date(),
           status: "Failure",
@@ -54,7 +56,7 @@ async function main() {
     },
   });
 
-  console.log({ alice, bob });
+  console.log("Seeded users:", { alice, bob });
 }
 
 main()
@@ -62,7 +64,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error("Seeding error:", e);
     await prisma.$disconnect();
-    process.exit(1);
+    throw e; 
   });
